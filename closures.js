@@ -163,14 +163,15 @@ counter = counterFactory(10);
 
 
 function timeOutCounter() {
-  for (var i = 0; i <= 5; i++) {
-      setTimeout(function() {
-        console.log(i);
-      }, i * 1000);
+  for ( var i = 0; i <= 5; i++ ) {
+      var currentI = newScope( i );
+      setTimeout( currentI, i * 1000 );
   }
 
-  function newScope(i) {
-    console.log(i);
+  function newScope( savedReference ) {
+    return function() {
+      console.log( savedReference );
+    }
   }
 }
 timeOutCounter();
@@ -182,11 +183,28 @@ timeOutCounter();
 
 //////////////////PROBLEM 8////////////////////
 
-var funcArray = [];
+// create a function that returns an array that is made up of all sequential numbers from 0 to a number 'n'
+// inside that function, create a closure function that will save the reference of n
+function maker( limit ) {
+  var i;
+  var numbers = [];
+  for ( i = 0; i <= limit; i++ ) {
+    var currentI = newScope( i );
+    numbers.push( currentI );
+  }
 
+  function newScope( savedReference ) {
+    return function() {
+      return savedReference;
+    }
+  }
 
-/*
-  Make the following code work
+  return numbers;
+}
+
+var funcArray = maker( 5 );
+
+  // Make the following code work
 
   funcArray[0]() //0
   funcArray[1]() //1
@@ -195,5 +213,4 @@ var funcArray = [];
   funcArray[4]() //4
   funcArray[5]() //5
 
-  *Hint: Don't let this fool you. Break down what's really happening here.
-*/
+  // *Hint: Don't let this fool you. Break down what's really happening here.
